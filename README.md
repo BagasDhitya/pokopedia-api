@@ -23,8 +23,7 @@ src/
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/username/pokopedia-backend.git
-cd pokopedia-backend
+git clone https://github.com/username/pokopedia-backend](https://github.com/BagasDhitya/pokopedia-api.git
 ```
 
 ### 2. Install dependencies
@@ -38,8 +37,8 @@ npm install
 Create `.env` file:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/pokopedia"
-PORT=3000
+DATABASE_URL="YOUR-DATABASE-URL"
+PORT=8000
 ```
 
 ### 4. Prisma migration
@@ -57,7 +56,7 @@ npx ts-node-dev src/app.ts
 Server will running at:
 
 ```
-http://localhost:3000
+http://localhost:8000
 ```
 
 ---
