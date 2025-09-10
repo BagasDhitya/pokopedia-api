@@ -15,7 +15,7 @@ export interface UpdateProductDTO {
 export interface ProductResponseDTO {
     id: number;
     name: string;
-    image?: string;
+    image?: string | null;
     stock: number;
     basePrice: number;
     createdAt: Date;
