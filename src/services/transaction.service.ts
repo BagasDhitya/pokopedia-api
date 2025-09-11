@@ -10,6 +10,16 @@ export class TransactionService {
         this.prisma = new Database().getInstance();
     }
 
+    private generateInvoice(): string {
+        // format invoice : PKD-20250911-48390
+
+        const today = new Date()
+        const datePart = today.toISOString().split("T")[0].replace(/-/g, ""); // YYYYMMDD
+        const randomPart = Math.floor(100000 + Math.random() * 900000) // 6 digit random
+
+        return `PKD-${datePart}-${randomPart}`
+    }
+
     // ✅ Checkout semua cart milik user
     public async create(userId: number): Promise<any> {
         return this.prisma.$transaction(async (tx) => {
@@ -31,6 +41,7 @@ export class TransactionService {
                 data: {
                     userId,
                     totalAmount,
+                    invoice: this.generateInvoice(),
                     carts: {
                         connect: carts.map((c) => ({ id: c.id })), // relasi ke semua cart
                     },
@@ -48,6 +59,7 @@ export class TransactionService {
                 id: transaction.id,
                 userId: transaction.userId,
                 totalAmount: transaction.totalAmount,
+                invoice: transaction.invoice,
                 carts: transaction.carts.map((cart) => ({
                     id: cart.id,
                     totalAmount: cart.totalAmount,

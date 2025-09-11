@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.IO Test Client</h1>
+    <div id="status">Connecting...</div>
+    <div id="messages"></div>
+
+    <button onclick="joinRoom()">Join Room 2</button>
+    <button onclick="sendMessage()">Send Message</button>
+
+    <script>
+        const socket = io('http://localhost:8000');
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+
+        function log(message) {
+            console.log(message);
+            messagesDiv.innerHTML += '<div>' + JSON.stringify(message) + '</div>';
+        }
+
+        socket.on('connect', () => {
+            statusDiv.textContent = 'Connected! ID: ' + socket.id;
+            log('Connected with ID: ' + socket.id);
+        });
+
+        socket.on('disconnect', (reason) => {
+            statusDiv.textContent = 'Disconnected: ' + reason;
+            log('Disconnected: ' + reason);
+        });
+
+        socket.on('newMessage', (message) => {
+            log('New message: ' + JSON.stringify(message));
+        });
+
+        function joinRoom() {
+            socket.emit('joinRoom', 2);
+            log('Joined room 2');
+        }
+
+        function sendMessage() {
+            const msg = {
+                content: 'Hello from browser!',
+                senderId: 1,
+                receiverId: 2,
+                transactionId: 2
+            };
+            socket.emit('sendMessage', msg);
+            log('Sent: ' + JSON.stringify(msg));
+        }
+    </script>
+</body>
+</html>

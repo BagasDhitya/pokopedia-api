@@ -25,6 +25,9 @@ model User {
 
   cart         Cart[]
   transactions Transaction[]
+
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Product {
@@ -56,31 +59,48 @@ model CartItem {
 }
 
 model Transaction {
-  id        Int       @id @default(autoincrement())
-  totalAmount Float   @default(0) // tambahin totalAmount biar ga error
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          Int      @id @default(autoincrement())
+  invoice     String?  @unique @default(uuid())
+  totalAmount Float    @default(0) // tambahin totalAmount biar ga error
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   userId Int?
-  user   User?        @relation(fields: [userId], references: [id])
+  user   User? @relation(fields: [userId], references: [id])
 
-  carts  Cart[]       // 1 transaksi bisa punya banyak cart
+  carts Cart[] // 1 transaksi bisa punya banyak cart
+
+  Message Message[]
 }
 
 model Cart {
-  id            Int       @id @default(autoincrement())
-  totalAmount   Float     @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-  checkedOutAt  DateTime? // opsional: penanda cart sudah di-checkout
+  id           Int       @id @default(autoincrement())
+  totalAmount  Float     @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  checkedOutAt DateTime? // opsional: penanda cart sudah di-checkout
 
-  userId        Int
-  user          User         @relation(fields: [userId], references: [id])
-  CartItem      CartItem[]
+  userId   Int
+  user     User       @relation(fields: [userId], references: [id])
+  CartItem CartItem[]
 
   transactionId Int?
   transaction   Transaction? @relation(fields: [transactionId], references: [id])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  senderId      Int
+  receiverId    Int
+  transactionId Int?
+
+  sender      User         @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User         @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
 }
 
 enum Role {
