@@ -26,6 +26,18 @@ export class ProductService {
         })
     }
 
+
+    public async delete(id: number): Promise<boolean> {
+        const product = await this.prisma.product.findUnique({ where: { id } });
+        if (!product || product.deletedAt) return false;
+
+        await this.prisma.product.update({
+            where: { id },
+            data: { deletedAt: new Date() },
+        });
+        return true;
+    }
+
     public async getAll(): Promise<ProductResponseDTO[]> {
         return await this.prisma.product.findMany({
             where: {

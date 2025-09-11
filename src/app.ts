@@ -1,6 +1,11 @@
 import express, { Application, Request, Response } from 'express'
 import { errorResponse } from './helpers/response.helper'
 
+import { ProductRouter } from './routers/product.router'
+import { CartRouter } from './routers/cart.router'
+import { UserRouter } from './routers/user.router'
+import { TransactionRouter } from './routers/transaction.router'
+
 class App {
     private app: Application
     private port: number
@@ -25,9 +30,10 @@ class App {
     }
 
     private initRoutes(): void {
-        this.app.use('/', (req: Request, res: Response) => {
-            res.status(200).send({ message: 'Hello PokoPedia!' })
-        })
+        this.app.use('/api/products', new ProductRouter().getRouter())
+        this.app.use('/api/carts', new CartRouter().getRouter())
+        this.app.use('/api/users', new UserRouter().getRouter())
+        this.app.use('/api/transactions', new TransactionRouter().getRouter())
     }
 
     public listen(): void {

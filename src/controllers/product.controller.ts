@@ -8,6 +8,12 @@ export class ProductController {
 
     constructor() {
         this.productService = new ProductService()
+
+        this.create = this.create.bind(this)
+        this.update = this.update.bind(this)
+        this.delete = this.delete.bind(this)
+        this.getAll = this.getAll.bind(this)
+        this.getById = this.getById.bind(this)
     }
 
     public async create(req: Request, res: Response): Promise<void> {
@@ -18,7 +24,7 @@ export class ProductController {
             throw new AppError('Name, stock, and basePrice are required', 404)
         }
 
-        const product = await this.productService.create({ name, image, stock, basePrice })
+        const product = await this.productService.create({ name: name, image: image, stock: stock, basePrice: basePrice })
         successResponse(res, product, 'Product created', 201)
     }
 
@@ -35,6 +41,17 @@ export class ProductController {
         if (!updated) throw new AppError('Product not found', 404)
 
         successResponse(res, updated, 'Product updated', 201)
+    }
+
+
+    public async delete(req: Request, res: Response): Promise<void> {
+        const id = Number(req.params.id);
+        if (isNaN(id)) throw new AppError("Invalid product ID", 400);
+
+        const deleted = await this.productService.delete(id);
+        if (!deleted) throw new AppError("Product not found", 404);
+
+        successResponse(res, null, "Product deleted");
     }
 
     public async getAll(req: Request, res: Response): Promise<void> {
